@@ -3,6 +3,7 @@ vim.cmd("set expandtab")
 vim.cmd("set softtabstop=4")
 vim.cmd("set shiftwidth=4")
 vim.cmd("set nu rnu")
+vim.cmd("set colorcolumn=100")
 vim.cmd("cabb hs split")
 
 vim.cmd("tnoremap <Esc> <C-\\><C-n>")
@@ -11,7 +12,17 @@ vim.g.mapleader = " "
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  local out = vim.fn.system(
+      {
+          "git",
+          "clone",
+          "--filter=blob:none",
+          "--branch=stable",
+          lazyrepo,
+          lazypath
+      }
+  )
+
   if vim.v.shell_error ~= 0 then
     vim.api.nvim_echo({
       { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
@@ -36,7 +47,12 @@ local plugins= {
     },
     {
         "nvim-neo-tree/neo-tree.nvim", branch = "v3.x",
-        dependencies = { "nvim-lua/plenary.nvim", "nvim-tree/nvim-web-devicons", "MunifTanjim/nui.nvim"}
+        dependencies =
+        {
+            "nvim-lua/plenary.nvim",
+            "nvim-tree/nvim-web-devicons",
+            "MunifTanjim/nui.nvim"
+        }
     },
     {
         'nvim-lualine/lualine.nvim',
@@ -128,7 +144,7 @@ require('lspconfig').rust_analyzer.setup{
 }
 
 require("mason-lspconfig").setup({
-    ensure_installed = { "lua_ls", "cmake"}
+    ensure_installed = { "lua_ls", "cmake", "jedi_language_server"}
 })
 
 lspconfig.lua_ls.setup({
@@ -147,6 +163,9 @@ lspconfig.cmake.setup({
     capabilities = capabilities
 })
 
+lspconfig.jedi_language_server.setup({
+    capabilities = capabilities
+})
 
 -- require("vim-visual-multi").setup()
 require('lualine').setup()
@@ -170,7 +189,7 @@ require("luasnip.loaders.from_vscode").lazy_load()
       ['<C-f>'] = cmp.mapping.scroll_docs(4),
       ['<C-Space>'] = cmp.mapping.complete(),
       ['<C-e>'] = cmp.mapping.abort(),
-      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+      ['<CR>'] = cmp.mapping.confirm({ select = false}),
     }),
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
@@ -225,21 +244,21 @@ local function toggle_diagnostic()
 end
 
 --interface toggle keymaps
-vim.keymap.set('n', '<leader>n', toggle_num, {})            -- toggle line numbers
-vim.keymap.set('n', '<leader>s', toggle_laststatus, {})     -- toggle vim status line
-vim.keymap.set('n', '<leader>d', toggle_diagnostic, {})     -- toggle vim status line
-vim.keymap.set('n', '<leader>u', ':UndotreeToggle<CR>', {}) -- toggle show diagnostic messages
+vim.keymap.set('n', '<leader>n', toggle_num, {})           -- toggle line numbers
+vim.keymap.set('n', '<leader>s', toggle_laststatus, {})    -- toggle vim status line
+vim.keymap.set('n', '<leader>d', toggle_diagnostic, {})    -- toggle show diagnostic messages
+vim.keymap.set('n', '<leader>u', ':UndotreeToggle<CR>', {})
 vim.keymap.set('n', '<leader>b', ':Neotree filesystem toggle right<CR>', {}) -- open filesystem menu
 
 --default vim commands qol improvements/remaps
-vim.keymap.set('n', 'J',  '5<C-e>',{})                  -- scroll down
-vim.keymap.set('n', 'K',  '5<C-y>',{})                  -- scroll up
-vim.keymap.set('n', '<Enter>', 'o<ESC>',{})             -- add line below
-vim.keymap.set('n', '<leader><Enter>', 'O<ESC>',{})     -- add line above
-vim.keymap.set('n', '<leader>[', 'o{<CR>}<ESC>k',{})    -- create new cirly braces beneath
-vim.keymap.set('n', '<leader>\'', ':noh<CR>:call clearmatches()<CR>:nohls<CR>',{}) -- go to definition location
-vim.keymap.set('n', '<leader>v',  ':vs<CR><C-w>l',{})   -- vertical split and go left
-vim.keymap.set('n', '<leader>q',  ':q<CR>',{})          -- quit
+vim.keymap.set('n', 'J',  '5<C-e>',{})                     -- scroll down
+vim.keymap.set('n', 'K',  '5<C-y>',{})                     -- scroll up
+vim.keymap.set('n', '<Enter>', 'o<ESC>',{})                -- add line below
+vim.keymap.set('n', '<leader><Enter>', 'O<ESC>',{})        -- add line above
+vim.keymap.set('n', '<leader>[', 'o{<CR>}<ESC>k',{})       -- create new cirly braces beneath
+vim.keymap.set('n', '<leader>\'', ':noh<CR>:nohls<CR>',{}) -- go to definition location
+vim.keymap.set('n', '<leader>v',  ':vs<CR><C-w>l',{})      -- vertical split and go left
+vim.keymap.set('n', '<leader>q',  ':q<CR>',{})             -- quit
 
 --motion keymaps
 vim.keymap.set('n', '<leader>l',  '<C-w>l',{})
