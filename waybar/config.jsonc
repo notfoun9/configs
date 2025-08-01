@@ -1,0 +1,20 @@
+// -*- mode: jsonc -*-
+{
+    "layer": "top",
+    "position": "bottom",
+    "height": 42,
+    "spacing": 2,
+    "modules-left": [
+        "custom/arch",
+        "hyprland/workspaces"
+    ],
+    "modules-right": [
+        "cpu",
+        "memory",
+        "battery",
+        "clock"
+    ],
+    "include": [
+		"~/.config/waybar/modules.json"
+	]
+}
